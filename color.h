@@ -42,7 +42,7 @@ _color getHue(double h){	 // THis shifts thru the rgb color space. Very neat.
 			break;
 	}
 	
-	col.r=1-col.r;col.g=1-col.g;col.b=1-col.b;
+	col.r=1-col.r;col.g=1-col.g;col.b=1-col.b; // Invert the colors
 	
 	return col;
 }
@@ -60,7 +60,7 @@ _color getGrad2(double p){	 // Shifts from color one to color two
 	c1.r=1-c1.r;c1.g=1-c1.g;c1.b=1-c1.b;
 	c2.r=1-c2.r;c2.g=1-c2.g;c2.b=1-c2.b;
 	
-	p=sqrt(p);
+	p=sqrt(p);	// This gives a different change in the colors
 	//~ p=log10f(p+25);
 	
 	//~ if(((int)p)%2==0 && p>1){
@@ -74,7 +74,7 @@ _color getGrad2(double p){	 // Shifts from color one to color two
 	//~ }
 	
 	if(p>1){
-		p=p-((int)p);
+		p=p-((int)p);	// Invert the colors.
 	}
 	
 	col.r=c1.r+p*(c2.r-c1.r);
