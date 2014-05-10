@@ -22,8 +22,6 @@ int main(int argc,char *argv[]){
 	
 	_color *bitmap,col;
 	
-	//~ mode=14;	 // The equation to be used.
-	
 	screenx=1600/1;	 // The resolution of the image
 	screeny=1200/1;	
 	
