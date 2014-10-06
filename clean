@@ -1,0 +1,10 @@
+rm -v *{jpg,txt} 2> /dev/null
+rm -v feh* 2>/dev/null
+rm -v cliff*.png 2>/dev/null
+rm -v ?.png ??.png ???.png 2>/dev/null
+mv -v *png pics 2>/dev/null
+
+for i in $(seq 800)
+do
+    rm -v $i.ppm > /dev/null 2>/dev/null
+done
