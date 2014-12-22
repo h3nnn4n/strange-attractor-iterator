@@ -225,8 +225,11 @@ int main(int argc,char *argv[]){
                 //xn=cos(a*y)+sin(b*y)-sin(c*y)+cos(d*y-x)-b*cos(a*y+sin((b-a)*sin(b*x)))+y*(sin((b+c)*y)*(y-1.0))+b*sin(a-y*b-x)-(c-a);
                 //yn=cos(a*x)-sin(b*x)+sin(c*x)-cos(d*x-y)+d*sin(a+x*cos((a+y*sin(x+d)))*sin(a+cos(x-y/2.3)))-a*cos(c-x*d-y)+(b-d);
                 //~ }else if(mode=25){
-                xn=cos(a*y)-cos(a*y)+sin(c*y)-sin(d*y)+cos(a*x+b)+sin((d-c)*x)+b;
-                yn=cos(b*x)+cos(b*x)-sin(d*x)+sin(c*x)+cos(c*y+d)+cos((a-b)*y)+d;
+                xn=cos(a*y)-cos(a*y)+sin(c*y)-sin(d*y)+cos(a*x+b)+sin((d-c)*x)+a-b;
+                yn=cos(b*x)+cos(b*x)-sin(d*x)+sin(c*x)+cos(c*y+d)+cos((a-b)*y)+c-d;
+
+                //xn=cos(a*y)-cos(a*y)+sin(c*y)-sin(d*y)+cos(a*x+b)+sin((d-c)*x)+b;
+                //yn=cos(b*x)+cos(b*x)-sin(d*x)+sin(c*x)+cos(c*y+d)+cos((a-b)*y)+d;
                 //~ }
                 //~ }else if(mode=26){
                 //~ xn+=(c*cos(y*d))+b*sin(y*b)-cos(y*y/x);
