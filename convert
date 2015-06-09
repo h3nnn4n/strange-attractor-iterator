@@ -1,0 +1,6 @@
+for x in `ls *.ppm`; 
+do
+	`convert $x w_$x.jpg`;
+	echo $x
+done
+
