@@ -3,7 +3,7 @@
 ./stoper
 ./clean
 
-make icc
+make  
 
 ./gen1 &
 ./gen2 &
