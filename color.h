@@ -8,7 +8,7 @@ int populatePal(_color *pallete){
     _color col;
     int size,i,r,g,b;
     char limbo[256];
-    FILE *pal=fopen("pals/sunrise.ppm","rt");
+    FILE *pal=fopen("pals/ultimate_feel.ppm","rt");
     if(pal==NULL){
         printf("ohshishishishish\n");
         exit(1);
@@ -32,6 +32,7 @@ int populatePal(_color *pallete){
     }
     fclose(pal);
 }
+
 _color getPalMem(double p,_color *pal){
     int i,size=255;
     _color col;
@@ -157,7 +158,7 @@ _color getPal(double p){	 // Get the colors from a file. Slow enough that make s
     _color col;
     int size,i,r,g,b;
     char lal[256];
-    FILE *pal=fopen("pals/sunrise.ppm","rt");
+    FILE *pal=fopen("pals/ultimate_feel.ppm", "rt");
 
     fgets(lal,255,pal);
     fgets(lal,255,pal);

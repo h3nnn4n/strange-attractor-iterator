@@ -111,13 +111,13 @@ _color getHue(double h){	 // THis shifts thru the rgb color space. Very neat.
 
 _color getGrad2(double p){	 // Shifts from color one to color two
     _color col,c1,c2;
-    c1.r = 82	/255.0;
-    c1.g = 181	/255.0;
+    c1.r = 232	/255.0;
+    c1.g = 1	/255.0;
     c1.b = 126	/255.0;
 
-    c2.r = 192	/255.0;
-    c2.g = 133	/255.0;
-    c2.b = 152	/255.0;
+    c2.r = 42	/255.0;
+    c2.g = 1	/255.0;
+    c2.b = 252	/255.0;
 
     c1.r=1-c1.r;c1.g=1-c1.g;c1.b=1-c1.b;
     c2.r=1-c2.r;c2.g=1-c2.g;c2.b=1-c2.b;
@@ -152,7 +152,7 @@ _color getPal(double p){	 // Get the colors from a file. Slow enough that make s
     _color col;
     int size,i,r,g,b;
     char lal[256];
-    FILE *pal=fopen("pals/violent.ppm","rt");
+    FILE *pal=fopen("pals/friendly.ppm","rt");
 
     fgets(lal,255,pal);
     fgets(lal,255,pal);

@@ -32,11 +32,12 @@ int main(int argc,char *argv[]){
 
     frames=2500;	 // How many frames the image will have.
     skipIters=10;	 // Skips the first n cycles before drawing to the file
-    iters=5000; 	 // Total iterations
-    sens=0.075/1.0;	 // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
+    iters=2500; 	 // Total iterations
+    sens=0.025/2.0;	 // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
     images=50;
 
-    srand48(999);				 // Else use this one as seed. The seed determine the value generated as parameter.
+    srand48(atoi(argv[1]));				 // Else use this one as seed. The seed determine the value generated as parameter.
+    printf("seed= %d\n",atoi(argv[1]));
 
     al=drand48();
     ah=drand48();
@@ -50,6 +51,20 @@ int main(int argc,char *argv[]){
     dl=drand48();
     dh=drand48();
 
+    /*
+    al=0.5912;
+    ah=0.5924;
+
+    bl=0.3945;
+    bh=0.3913;
+
+    cl=0.6666;
+    ch=0.6612;
+
+    dl=0.0007;
+    dh=0.0004;
+    */
+
     bitmap=(_color*)malloc(sizeof(_color)*screenx*screeny);
 
     for(img_counter=0;img_counter<images;img_counter++){
@@ -59,7 +74,7 @@ int main(int argc,char *argv[]){
         sprintf(name,"%04d",img_counter);
         sprintf(fname,"%s.ppm",name);
 
-        printf("%s --- \n",fname);
+        //printf("%s --- \n",fname);
 
         FILE *img=fopen(fname,"wt");
 
@@ -73,23 +88,25 @@ int main(int argc,char *argv[]){
         maxc=acos( ((ch-(cos((((double)img_counter/images)*M_PI)*2)+1)*0.0612)*4.0-2.0)/16.0);
 
         mind=acos( ((dl-(cos((((double)img_counter/images)*M_PI)*2)+1)*0.0612)*4.0-2.0)/16.0);
-            maxd=acos( ((dh-(sin((((double)img_counter/images)*M_PI)*2)+1)*0.0612)*4.0-2.0)/16.0);
+        maxd=acos( ((dh-(sin((((double)img_counter/images)*M_PI)*2)+1)*0.0612)*4.0-2.0)/16.0);
 
         k=0;
 
         fprintf(img,"P3\n%d %d\n255\n",screenx,screeny);
 
-        printf("Parameters are:\n");
-        printf("a=%.3f to %.3f\n",cos(mina)*16,cos(maxa)*16);
-        printf("b=%.3f to %.3f\n",cos(minb)*16,cos(maxb)*16);
-        printf("c=%.3f to %.3f\n",cos(minc)*16,cos(maxc)*16);
-        printf("d=%.3f to %.3f\n",cos(mind)*16,cos(maxd)*16);
+        //printf("Parameters are:\n");
+        //printf("a=%.3f to %.3f\n",cos(mina)*16,cos(maxa)*16);
+        //printf("b=%.3f to %.3f\n",cos(minb)*16,cos(maxb)*16);
+        //printf("c=%.3f to %.3f\n",cos(minc)*16,cos(maxc)*16);
+        //printf("d=%.3f to %.3f\n",cos(mind)*16,cos(maxd)*16);
 
         for(l=0;l<2;l++){
-            if(l==0)
-                printf("Evaluating bondaries...\n");
-            else if(l==1)
-                printf("Starting drawing and stuff...\n");
+            if(l==0){
+                //printf("Evaluating bondaries...\n");
+            }else if(l==1){
+                //printf("Starting drawing and stuff...\n");
+                //
+            }
 
             for(i=0;i<=(l==0?frames*0.10:frames);i++){
                 p=i/(double)(l==0?frames*0.10:frames);
@@ -99,10 +116,10 @@ int main(int argc,char *argv[]){
                 c=cos(minc+p*(maxc-minc))*16.0;
                 d=cos(mind+p*(maxd-mind))*16.0;
 
-                //~ col=getHue(p);   	 // The coloring mode. THis used shifts the colors thru the RGB color space where at least one canal will be the maximum.
-                //~ col=getGrad2(p*12.50);	 // Shifts from one color to another. See color.h
+                //col=getHue(p);   	 // The coloring mode. THis used shifts the colors thru the RGB color space where at least one canal will be the maximum.
+                //col=getGrad2(p*12.50);	 // Shifts from one color to another. See color.h
                 col=getPal(p);   	 // Reads a gradient from a file. UTTERLY SLOW!!!!!!!!!!!!!!!!!!!!!1!! Dont dare to used it.
-                //~ col=getPalMem(p,pal);   	 // Ultimate version of palete, now directly from the RAM. about 123152394582 times faster. More than enough
+                //col=getPalMem(p,pal);   	 // Ultimate version of palete, now directly from the RAM. about 123152394582 times faster. More than enough
 
                 x=1.0;
                 y=-0.2;
@@ -110,8 +127,12 @@ int main(int argc,char *argv[]){
                 z=4.0;
 
                 for(j=0;j<iters;j++){
-                    xn=sin(a*y)+c*cos(a*x);
-                    yn=sin(b*x)+d*cos(b*y);
+                    xn=sin(a*w)+c*cos(b*x)*(b*w-c);
+                    yn=sin(b*x)+d*cos(a*y)*(a*w-d);
+                    wn=c*(sin(j*M_PI/3600))/2.0;
+
+                    //xn=(sin(x*a*sin(c*y))+b)-fabs(cos(y*b*(cos(d*x))))-exp(c);
+                    //yn=(cos(y*a*sin(c*x))+a)-fabs(sin(x*b*(cos(d*y))))-exp(a);
 
                     x=xn;
                     y=yn;
@@ -146,8 +167,8 @@ int main(int argc,char *argv[]){
                         }
                     }
                 }
-                if(i%(frames/5)==0 && l==1)
-                    fprintf(stdout," -- %.2f%%\n",p*100.0);
+                //if(i%(frames/5)==0 && l==1)
+                //    fprintf(stdout," -- %.2f%%\n",p*100.0);
             }
 
             /*minx=lowx;
@@ -157,15 +178,16 @@ int main(int argc,char *argv[]){
 
 
             if(l==0){
-                printf("Boundaries are:\n");
-                printf("x %.3f to %.3f\n",minx,maxx);
-                printf("y %.3f to %.3f\n",miny,maxy);
+                //printf("Boundaries are:\n");
+                //printf("x %.3f to %.3f\n",minx,maxx);
+                //printf("y %.3f to %.3f\n",miny,maxy);
             }*/
 
-            maxx=2.651319;
-            maxy=3.558234;
-            minx=-2.563866;
-            miny=-3.556106;
+            maxx=1.892642;
+            maxy=1.796382;
+            minx=-2.045956;
+            miny=-5.499882;
+
         }
 
         for(i=0;i<screeny;i++){
@@ -182,8 +204,8 @@ int main(int argc,char *argv[]){
             fputc('\n',img);
         }
 
-        printf(" -------\n\n");
-        fprintf(stdout,"minx=%.4f;\tmaxx=%.4f;\nminy=%.4f;\tmaxy=%.4f;\n",minx,maxx,miny,maxy);
+        //printf(" -------\n\n");
+        //fprintf(stdout,"minx=%.4f;\tmaxx=%.4f;\nminy=%.4f;\tmaxy=%.4f;\n",minx,maxx,miny,maxy);
 
         fclose(img);
 
@@ -192,7 +214,9 @@ int main(int argc,char *argv[]){
 
         sprintf(tmp,"rm %s",fname);
         system(tmp);
+        printf("%d\n",img_counter);
     }
+    puts("\n");
 
     printf("\n\nEffective boundaries:\n");
     printf("maxx=%f;\n",highx+highx*0.1);
