@@ -158,7 +158,7 @@ _color getPal(double p){	 // Get the colors from a file. Slow enough that make s
     _color col;
     int size,i,r,g,b;
     char lal[256];
-    FILE *pal=fopen("pals/ultimate_feel.ppm", "rt");
+    FILE *pal=fopen("pals/sunrise.ppm", "rt");
 
     fgets(lal,255,pal);
     fgets(lal,255,pal);

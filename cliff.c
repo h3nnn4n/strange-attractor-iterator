@@ -25,8 +25,11 @@ int main(int argc,char *argv[]){
 
     pal=(_color*)malloc(sizeof(_color)*255);
 
-    screenx=1600/1.0;	 // The resolution of the image
-    screeny=1200/1.0;
+    //screenx=1600/1.0;	 // The resolution of the image
+    //screeny=1200/1.0;
+
+    screenx=1920/1.0;	 // The resolution of the image
+    screeny=1080/1.0;
 
     offset = 1000;
 
@@ -103,8 +106,8 @@ int main(int argc,char *argv[]){
 
             for(j=0;j<iters;j++){
 
-                xn = (a*cos((j*M_PI/180.0)*b+c)) + c*cos(a*x) + d*cos(b*y) + a*cos(y*x + a);
-                yn = (b*sin((j*M_PI/180.0)*a+d)) + d*sin(b*y) + c*cos(a*x) + b*cos(y*x + b);
+                xn = (a*cos((j*M_PI/180.0)*b+c)) * (cos(x*a) + b*sin(y*d));
+                yn = (b*sin((j*M_PI/180.0)*a+d)) * (sin(y*b) + c*cos(x*a));
 
                 x=xn;
                 y=yn;
@@ -148,10 +151,10 @@ int main(int argc,char *argv[]){
         //~ maxx=highx+(highx/25.0);
         //~ maxy=highy+(highy/25.0);
 
-        minx=lowx;
-        miny=lowy;
-        maxx=highx;
-        maxy=highy;
+        minx = lowx;
+        miny = lowy;
+        maxx = highx;
+        maxy = highy;
 
         if(l==0){
             printf("Boundaries are:\n");
