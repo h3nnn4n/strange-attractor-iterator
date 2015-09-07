@@ -1,12 +1,14 @@
 #!/bin/bash
 
-./stoper
-./clean
+#    This script automates the criation process for 800 images
 
-make  
+./stoper # Stops any instance that might be running
+./clean  # *REMOVES* all the images in the current folder. You should  read the script to be *EXTRA* sure that you wont delete anything important.
 
-./gen1 &
-./gen2 &
-./gen3 &
-./gen4 &
+make     # The program is compiled
+
+./gen1 & # Each one of those script executes the ./cliff with a different seed 200 times
+./gen2 & # Each one of those script executes the ./cliff with a different seed 200 times
+./gen3 & # Each one of those script executes the ./cliff with a different seed 200 times
+./gen4 & # Each one of those script executes the ./cliff with a different seed 200 times
 
