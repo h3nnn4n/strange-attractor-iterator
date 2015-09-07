@@ -45,68 +45,36 @@ _color getHue(double h){	 // THis shifts thru the rgb color space. Very neat.
     h*=6.0;
     int hi=(int)h;
     double hf=h-hi;
-    //~ switch(hi){
-    //~ case 0:
-    //~ col.r=1.0;
-    //~ col.g=hf;
-    //~ col.b=0.0;
-    //~ break;
-    //~ case 1:
-    //~ col.r=1.0-hf;
-    //~ col.g=1.0;
-    //~ col.b=0.0;
-    //~ break;
-    //~ case 2:
-    //~ col.r=0.0;
-    //~ col.g=1.0;
-    //~ col.b=hf;
-    //~ break;
-    //~ case 3:
-    //~ col.r=0.0;
-    //~ col.g=1.0-hf;
-    //~ col.b=1.0;
-    //~ break;
-    //~ case 4:
-    //~ col.r=hf;
-    //~ col.g=0.0;
-    //~ col.b=1.0;
-    //~ break;
-    //~ case 5:
-    //~ col.r=1.0;
-    //~ col.g=0.0;
-    //~ col.b=1.0-hf;
-    //~ break;
-    //~ }
     switch(hi){
         case 0:
-            col.r=0.0;
-            col.g=sqrt(hf);
-            col.b=0.7;
+            col.r=1.0;
+            col.g=hf;
+            col.b=0.0;
             break;
         case 1:
-            col.r=0.2+hf/2.0;
-            col.g=0.2;
-            col.b=0.7;
+            col.r=1.0-hf;
+            col.g=1.0;
+            col.b=0.0;
             break;
         case 2:
-            col.r=0.5;
-            col.g=0.3;
-            col.b=hf/2.0;
+            col.r=0.0;
+            col.g=1.0;
+            col.b=hf;
             break;
         case 3:
-            col.r=0.25;
-            col.g=hf;
-            col.b=0.7245;
+            col.r=0.0;
+            col.g=1.0-hf;
+            col.b=1.0;
             break;
         case 4:
-            col.r=hf/2.0;
-            col.g=0.247;
-            col.b=0.8632;
+            col.r=hf;
+            col.g=0.0;
+            col.b=1.0;
             break;
         case 5:
-            col.r=0.57;
-            col.g=0.157;
-            col.b=1.0-hf/2;
+            col.r=1.0;
+            col.g=0.0;
+            col.b=1.0-hf;
             break;
     }
 
@@ -117,13 +85,13 @@ _color getHue(double h){	 // THis shifts thru the rgb color space. Very neat.
 
 _color getGrad2(double p){	 // Shifts from color one to color two
     _color col,c1,c2;
-    c1.r = 82	/255.0;
-    c1.g = 181	/255.0;
-    c1.b = 126	/255.0;
+    c1.r =  82 / 255.0;
+    c1.g = 181 / 255.0;
+    c1.b = 126 / 255.0;
 
-    c2.r = 192	/255.0;
-    c2.g = 133	/255.0;
-    c2.b = 152	/255.0;
+    c2.r = 192 / 255.0;
+    c2.g = 133 / 255.0;
+    c2.b = 152 / 255.0;
 
     c1.r=1-c1.r;c1.g=1-c1.g;c1.b=1-c1.b;
     c2.r=1-c2.r;c2.g=1-c2.g;c2.b=1-c2.b;
@@ -133,19 +101,6 @@ _color getGrad2(double p){	 // Shifts from color one to color two
     }
 
     p=sqrt(p);	// This gives a different change in the colors
-    //~ p=log10f(p+25);
-
-    //~ if(((int)p)%2==0 && p>1){
-    //~ if(p>1){
-    //~ p=p-((int)p+1);
-    //~ }
-    //~ }else{
-    //~ if(p>1){
-    //~ p=p-((int)p);
-    //~ }
-    //~ }
-
-
 
     col.r=c1.r+p*(c2.r-c1.r);
     col.g=c1.g+p*(c2.g-c1.g);
@@ -158,7 +113,7 @@ _color getPal(double p){	 // Get the colors from a file. Slow enough that make s
     _color col;
     int size,i,r,g,b;
     char lal[256];
-    FILE *pal=fopen("pals/sunrise.ppm", "rt");
+    FILE *pal=fopen("pals/bring_the_darkness.ppm", "rt");
 
     fgets(lal,255,pal);
     fgets(lal,255,pal);
@@ -175,8 +130,6 @@ _color getPal(double p){	 // Get the colors from a file. Slow enough that make s
     }else{
         fscanf(pal,"%d\n%d\n%d\n",&r,&g,&b);
     }
-
-    //~ printf("%d %d %d\n",r,g,b);
 
     col.r=r/255.0;
     col.g=g/255.0;
