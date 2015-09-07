@@ -99,29 +99,29 @@ int main(int argc,char *argv[]){
             col=getPal(p);   	 // Reads a gradient from a file. UTTERLY SLOW!!!!!!!!!!!!!!!!!!!!!1!! Dont dare to used it.
             //~ col=getPalMem(p,pal);   	 // Ultimate version of palete, now directly from the RAM. about 123152394582 times faster. More than enough
 
-            x=(drand48()-0.5)*5.0;
-            y=(drand48()-0.5)*5.0;
-            w=(drand48()-0.5)*5.0;
-            z=(drand48()-0.5)*5.0;
+            x = (drand48()-0.5) * 4.0;
+            y = (drand48()-0.5) * 4.0;
+            w = (drand48()-0.5) * 4.0;
+            z = (drand48()-0.5) * 4.0;
 
             for(j=0;j<iters;j++){
 
-                xn = (a*cos((j*M_PI/180.0)*b+c)) * (cos(x*a) + b*sin(y*d));
-                yn = (b*sin((j*M_PI/180.0)*a+d)) * (sin(y*b) + c*cos(x*a));
+                xn = (a * cos((j * M_PI/180.0) + c)) + b*sinh(y*d)/cosh(x*y * a);
+                yn = (b * sin((j * M_PI/180.0) + d)) + c*sinh(x*a)/cosh(x*y * b);
 
-                x=xn;
-                y=yn;
-                w=wn;
-                z=zn;
+                x = xn;
+                y = yn;
+                w = wn;
+                z = zn;
 
-                if(j<skipIters)
+                if(j < skipIters)
                     continue;
 
-                if(k++==0){
+                if(k++ == 0){
                     lowx=x;lowy=y;highx=x;highy=y;
                 }
 
-                if(l==0){
+                if(l == 0){
                     if(x<lowx){
                         lowx=x;
                     }if(y<lowy){
@@ -132,13 +132,13 @@ int main(int argc,char *argv[]){
                         highy=y;
                     }
                 }else if(l==1){
-                    xi=((x-minx)*screenx/(maxx-minx));
-                    yi=((y-miny)*screeny/(maxy-miny));
+                    xi = ((x-minx)*screenx/(maxx-minx));
+                    yi = ((y-miny)*screeny/(maxy-miny));
 
                     if(xi<screenx && xi>=0 && yi<screeny && yi>=0){
-                        bitmap[yi*screenx+xi].r+=col.r;
-                        bitmap[yi*screenx+xi].g+=col.g;
-                        bitmap[yi*screenx+xi].b+=col.b;
+                        bitmap[yi*screenx+xi].r += col.r;
+                        bitmap[yi*screenx+xi].g += col.g;
+                        bitmap[yi*screenx+xi].b += col.b;
                     }
                 }
             }
