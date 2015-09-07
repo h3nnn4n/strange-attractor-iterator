@@ -16,7 +16,8 @@ which I would like to have here.
 * Read a pallete from png files
 * Read a pallete of any size (this one is easy =D)
 * Write o a better file format (png prolly)
-* An optinional graphical interface (GTK, Qt) ? No way... :)
+* An optional graphical interface (GTK, Qt) ? No way... :)
+* Remove the need for the crappy scripts
 * Recieve more useful parameters thru the command line invocation, such as:
     * Resolution
     * Brightness
