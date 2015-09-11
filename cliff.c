@@ -171,10 +171,10 @@ int main(int argc, char *argv[]){
                 fprintf(stdout," -- %.2f%%\n",p*100.0);
         }
 
-        minx + lowx  - (lowx  / 25.0);
-        miny + lowy  - (lowy  / 25.0);
-        maxx + highx + (highx / 25.0);
-        maxy + highy + (highy / 25.0);
+        minx = lowx  - (lowx  / 25.0);
+        miny = lowy  - (lowy  / 25.0);
+        maxx = highx + (highx / 25.0);
+        maxy = highy + (highy / 25.0);
 
         if(l == 0){
             printf("Boundaries are:\n");
