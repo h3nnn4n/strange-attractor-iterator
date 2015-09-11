@@ -78,17 +78,17 @@ int main(int argc, char *argv[]){
 
     FILE *img=fopen(fname,"wt");
 
-    mina = acos( (drand48() * 4.0 - 2.0) * 16.0);	 // Randomly chooses the values to be used as parameter.
-    maxa = acos( (drand48() * 4.0 - 2.0) * 16.0);
+    mina = acos( (drand48() * 4.0 - 2.0) / 16.0);	 // Randomly chooses the values to be used as parameter.
+    maxa = acos( (drand48() * 4.0 - 2.0) / 16.0);
 
-    minb = acos( (drand48() * 4.0 - 2.0) * 16.0);
-    maxb = acos( (drand48() * 4.0 - 2.0) * 16.0);
+    minb = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    maxb = acos( (drand48() * 4.0 - 2.0) / 16.0);
 
-    minc = acos( (drand48() * 4.0 - 2.0) * 16.0);
-    maxc = acos( (drand48() * 4.0 - 2.0) * 16.0);
+    minc = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    maxc = acos( (drand48() * 4.0 - 2.0) / 16.0);
 
-    mind = acos( (drand48() * 4.0 - 2.0) * 16.0);
-    maxd = acos( (drand48() * 4.0 - 2.0) * 16.0);
+    mind = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    maxd = acos( (drand48() * 4.0 - 2.0) / 16.0);
 
     k=0;
 
