@@ -27,6 +27,7 @@
 #include <string.h>
 #include <math.h>
 
+#include "equations.h"
 #include "color.h"
 
 int main(int argc, char *argv[]){
@@ -128,8 +129,10 @@ int main(int argc, char *argv[]){
 
             for(j=0;j<iters;j++){
 
-                xn = (a * cos((j * M_PI/180.0) + c)) + b * sinh(y * d) / cosh(x * y * a);
-                yn = (b * sin((j * M_PI/180.0) + d)) + c * sinh(x * a) / cosh(x * y * b);
+                X_EQUATION
+                Y_EQUATION
+                W_EQUATION
+                Z_EQUATION
 
                 x = xn;
                 y = yn;
