@@ -8,7 +8,7 @@
 
 #include "color.h"
 
-int populatePal(_color *pallete){
+void populatePal(_color *pallete){
     _color col;
     int size,i,r,g,b;
     char limbo[256];
@@ -38,7 +38,7 @@ int populatePal(_color *pallete){
 }
 
 _color getPalMem(double p,_color *pal){
-    int i,size=255;
+    int size=255;
     _color col;
     memcpy(&col,&pal[(int)((p*size)+0.5)],sizeof(_color));
     return col;
