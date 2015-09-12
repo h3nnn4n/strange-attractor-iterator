@@ -30,36 +30,60 @@
 #include "equations.h"
 #include "color.h"
 
+typedef struct {
+    double a, b, c, d;
+} _parameters;
+
+typedef struct {
+    double mina;
+    double maxa;
+
+    double minb;
+    double maxb;
+
+    double minc;
+    double maxc;
+
+    double mind;
+    double maxd;
+} _parameters_interval;
+
+typedef struct {
+    int frames, skipIters, iters,
+        screenx, screeny;
+
+    double sens;
+} _image_opt;
+
+typedef struct {
+    double minx, maxx;
+    double miny, maxy;
+} _bounds;
+
+void cliff(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bounds, int useBounds, _color col);
+
 int main(int argc, char *argv[]){
-    int     screenx,screeny,
-            i,j,k,l,
-            xi,yi,
-            mode,
-            offset,
-            iters,frames,skipIters;
-    float   a,b,c,d,
-            mina,minb,minc,mind,
-            maxa,maxb,maxc,maxd,
-            minx,maxx,miny,maxy,
-            lowx,lowy,highx,highy,
-            p,sens,
-            xn,yn,zn,wn,
-            x,y,z,w;
-    char    name[257],fname[257],tmp[257];
+    int     i,j,k,l,
+            offset;
+    float   p;
+    char    name[257],fname[257];
 
-    _color *bitmap, col, *pal;
+    _bounds              bounds;
+    _image_opt           img_conf;
+    _parameters          params;
+    _parameters_interval p_interval;
 
-    pal = (_color*) malloc (sizeof(_color) * 255);
+    _color *bitmap, col;
 
-    screenx     = 1920 / 1.0;                   // The resolution of the image
-    screeny     = 1080 / 1.0;
+    img_conf.screenx     = 1920 / 2.0;                   // The resolution of the image
+    img_conf.screeny     = 1080 / 2.0;
 
-    offset      = 1000;
+             offset      = 1000;
 
-    frames      = 5800;                         // How many frames the image will have.
-    skipIters   = 500;                          // Skips the first n cycles before drawing to the file
-    iters       = 25000;                        // Total iterations
-    sens        = 0.025 / 4.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
+    img_conf.frames      = 5800;                         // How many frames the image will have.
+    img_conf.skipIters   = 500;                          // Skips the first n cycles before drawing to the file
+    img_conf.iters       = 25000;                        // Total iterations
+    img_conf.sens        = 0.025 / 4.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
 
     if(argc == 3){                              // If the second parameter will be used as name if there is one. Useful for scripting
         strcpy(name,argv[2]);
@@ -77,27 +101,32 @@ int main(int argc, char *argv[]){
 
     printf("%s --- \n",name);
 
-    mina = acos( (drand48() * 4.0 - 2.0) / 16.0);       // Randomly chooses the values to be used as parameter.
-    maxa = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    p_interval.mina = acos( (drand48() * 4.0 - 2.0) / 16.0);       // Randomly chooses the values to be used as parameter.
+    p_interval.maxa = acos( (drand48() * 4.0 - 2.0) / 16.0);
 
-    minb = acos( (drand48() * 4.0 - 2.0) / 16.0);
-    maxb = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    p_interval.minb = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    p_interval.maxb = acos( (drand48() * 4.0 - 2.0) / 16.0);
 
-    minc = acos( (drand48() * 4.0 - 2.0) / 16.0);
-    maxc = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    p_interval.minc = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    p_interval.maxc = acos( (drand48() * 4.0 - 2.0) / 16.0);
 
-    mind = acos( (drand48() * 4.0 - 2.0) / 16.0);
-    maxd = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    p_interval.mind = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    p_interval.maxd = acos( (drand48() * 4.0 - 2.0) / 16.0);
 
-    k=0;
+    bounds.minx =  9999.0;
+    bounds.miny =  9999.0;
+    bounds.maxx = -9999.0;
+    bounds.maxy = -9999.0;
+
+    k = 0;
 
     printf("Parameters are:\n");
-    printf("a=%.3f to %.3f\n", cos(mina) * 16, cos(maxa) * 16);
-    printf("b=%.3f to %.3f\n", cos(minb) * 16, cos(maxb) * 16);
-    printf("c=%.3f to %.3f\n", cos(minc) * 16, cos(maxc) * 16);
-    printf("d=%.3f to %.3f\n", cos(mind) * 16, cos(maxd) * 16);
+    printf("a=%.3f to %.3f\n", cos(p_interval.mina) * 16, cos(p_interval.maxa) * 16);
+    printf("b=%.3f to %.3f\n", cos(p_interval.minb) * 16, cos(p_interval.maxb) * 16);
+    printf("c=%.3f to %.3f\n", cos(p_interval.minc) * 16, cos(p_interval.maxc) * 16);
+    printf("d=%.3f to %.3f\n", cos(p_interval.mind) * 16, cos(p_interval.maxd) * 16);
 
-    bitmap = (_color*) malloc (sizeof(_color) * screenx * screeny);
+    bitmap = (_color*) malloc (sizeof(_color) * img_conf.screenx * img_conf.screeny);
 
     for(l = 0 ; l < 2 ; l++){
         if(l == 0)
@@ -105,105 +134,153 @@ int main(int argc, char *argv[]){
         else if(l == 1)
             printf("Starting drawing and stuff...\n");
 
-        for(i = 0 ; i <= (l==0 ? frames * 0.10 :frames) ; i++){     // The ternary operator is is used to run a smaller version of the code to get 
-            p = i / (double) (l==0 ? frames * 0.10 : frames);       // some boundaries for the image
+        for(i = 0 ; i <= (l==0 ? img_conf.frames * 0.10 :img_conf.frames) ; i++){     // The ternary operator is is used to run a smaller version of the code to get
+            p = i / (double) (l==0 ? img_conf.frames * 0.10 : img_conf.frames);       // some boundaries for the image
 
-            a = cos(mina + p * (maxa - mina)) * 16.0;
-            b = cos(minb + p * (maxb - minb)) * 16.0;
-            c = cos(minc + p * (maxc - minc)) * 16.0;
-            d = cos(mind + p * (maxd - mind)) * 16.0;
+            params.a = cos(p_interval.mina + p * (p_interval.maxa - p_interval.mina)) * 16.0;
+            params.b = cos(p_interval.minb + p * (p_interval.maxb - p_interval.minb)) * 16.0;
+            params.c = cos(p_interval.minc + p * (p_interval.maxc - p_interval.minc)) * 16.0;
+            params.d = cos(p_interval.mind + p * (p_interval.maxd - p_interval.mind)) * 16.0;
 
-            //~ col=getHue(p);              // The coloring mode. THis used shifts the colors thru the RGB color space where at least one canal will be the maximum.
-            //~ col=getGrad2(p*12.50);      // Shifts from one color to another. See color.h
-            col=getPal(p);                  // Reads a gradient from a file. UTTERLY SLOW!!!!!!!!!!!!!!!!!!!!!1!! Dont dare to used it.
-            //~ col=getPalMem(p,pal);       // Ultimate version of palete, now directly from the RAM. about 123152394582 times faster. More than enough
+            col = getPal(p);
 
-            x = (drand48() - 0.5) * 4.0;
-            y = (drand48() - 0.5) * 4.0;
-            w = (drand48() - 0.5) * 4.0;
-            z = (drand48() - 0.5) * 4.0;
+            _bounds bb;
 
-            for(j=0;j<iters;j++){
+            cliff(params, img_conf, bitmap, &bb, l, col);
 
-                X_EQUATION
-                Y_EQUATION
-                W_EQUATION
-                Z_EQUATION
+            if ( k++ == 0 ){
+                bounds = bb;
+            }
 
-                x = xn;
-                y = yn;
-                w = wn;
-                z = zn;
-
-                if(j < skipIters)
-                    continue;
-
-                if(k++ == 0){
-                    lowx  = x;
-                    lowy  = y;
-                    highx = x;
-                    highy = y;
-                }
-
-                if(l == 0){
-                     if(x < lowx){
-                        lowx = x;
-                    }if(y < lowy){
-                        lowy = y;
-                    }if(x > highx){
-                        highx = x;
-                    }if(y > highy){
-                        highy = y;
-                    }
-                }else if(l==1){
-                    xi = ((x-minx) * screenx / (maxx - minx));
-                    yi = ((y-miny) * screeny / (maxy - miny));
-
-                    if(xi<screenx && xi>=0 && yi<screeny && yi>=0){
-                        bitmap[yi*screenx+xi].r += col.r;
-                        bitmap[yi*screenx+xi].g += col.g;
-                        bitmap[yi*screenx+xi].b += col.b;
-                    }
+            if (l == 0) {
+                 if ( bb.minx < bounds.minx ) {
+                    bounds.minx = bb.minx;
+                }if ( bb.miny < bounds.miny ) {
+                    bounds.miny = bb.miny;
+                }if ( bb.maxx > bounds.maxx ) {
+                    bounds.maxx = bb.maxx;
+                }if ( bb.maxy > bounds.maxy ) {
+                    bounds.maxy = bb.maxy;
                 }
             }
-            if(i%(frames/5)==0 && l==1)
-                fprintf(stdout," -- %.2f%%\n",p*100.0);
+
+            if( i % (img_conf.frames / 5) == 0 && l == 1)
+                fprintf(stdout," -- %.2f%%\n", p * 100.0);
         }
 
-        minx = lowx  * 1.125;
-        miny = lowy  * 1.125;
-        maxx = highx * 1.125;
-        maxy = highy * 1.125;
-
         if(l == 0){
+            bounds.minx = bounds.minx * 1.25;
+            bounds.miny = bounds.miny * 1.25;
+            bounds.maxx = bounds.maxx * 1.25;
+            bounds.maxy = bounds.maxy * 1.25;
+
             printf("Boundaries are:\n");
-            printf("x %.3f to %.3f\n",minx,maxx);
-            printf("y %.3f to %.3f\n",miny,maxy);
+            printf("x %.3f to %.3f\n", bounds.minx, bounds.maxx);
+            printf("y %.3f to %.3f\n", bounds.miny, bounds.maxy);
         }
     }
 
-    for(i = 0 ; i < screeny ; i++){
-        for(j = 0 ; j < screenx ; j++){
-            col = bitmap[i * screenx + j];
+    for(i = 0 ; i < img_conf.screeny ; i++){
+        for(j = 0 ; j < img_conf.screenx ; j++){
+            col = bitmap[i * img_conf.screenx + j];
 
-            col.r = ((1.0 - exp( -sens * col.r)) * 255.0);
-            col.g = ((1.0 - exp( -sens * col.g)) * 255.0);
-            col.b = ((1.0 - exp( -sens * col.b)) * 255.0);
+            col.r = ((1.0 - exp( - img_conf.sens * col.r)) * 255.0);
+            col.g = ((1.0 - exp( - img_conf.sens * col.g)) * 255.0);
+            col.b = ((1.0 - exp( - img_conf.sens * col.b)) * 255.0);
 
             col = invert_color(col);
 
-            bitmap[i * screenx + j] = col;
+            bitmap[i * img_conf.screenx + j] = col;
         }
     }
 
     printf(" -------\n\n");
 
-    fprintf(stdout,"minx=%.4f;\tmaxx=%.4f;\nminy=%.4f;\tmaxy=%.4f;\n",minx,maxx,miny,maxy);
+    fprintf(stdout,"minx=%.4f;\tmaxx=%.4f;\nminy=%.4f;\tmaxy=%.4f;\n", bounds.minx,
+                                                                       bounds.maxx,
+                                                                       bounds.miny,
+                                                                       bounds.maxy );
 
-    save_png_to_file(bitmap, screenx, screeny, fname);
+    save_png_to_file(bitmap, img_conf.screenx, img_conf.screeny, fname);
 
     free(bitmap);
 
 
     return EXIT_SUCCESS;
+}
+
+void cliff(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bounds, int useBounds, _color col){
+    int    j, k,
+           xi, yi;
+
+    double x , y ,
+           xn, yn,
+           a , b , c , d,
+           lowx, lowy, highx, highy;
+
+    k = 0;
+
+    lowx  = 0.0;
+    lowy  = 0.0;
+    highx = 0.0;
+    highy = 0.0;
+
+    a = params.a;
+    b = params.b;
+    c = params.c;
+    d = params.d;
+
+    x = (drand48() - 0.5) * 4.0;
+    y = (drand48() - 0.5) * 4.0;
+
+    for(j = 0 ; j < img_conf.iters ; j++){
+
+        X_EQUATION
+        Y_EQUATION
+
+        x = xn;
+        y = yn;
+
+        if(j < img_conf.skipIters)
+            continue;
+
+        if(k++ == 0){
+            lowx  = x;
+            lowy  = y;
+            highx = x;
+            highy = y;
+        }
+
+        if(useBounds == 0){
+             if(x < lowx){
+                lowx = x;
+            }if(y < lowy){
+                lowy = y;
+            }if(x > highx){
+                highx = x;
+            }if(y > highy){
+                highy = y;
+            }
+        }else if(useBounds == 1){
+            xi = ((x - bounds->minx) * img_conf.screenx / (bounds->maxx - bounds->minx));
+            yi = ((y - bounds->miny) * img_conf.screeny / (bounds->maxy - bounds->miny));
+
+            if(xi < img_conf.screenx && xi >= 0 && yi < img_conf.screeny && yi >= 0){
+                bitmap[yi * img_conf.screenx + xi].r += col.r;
+                bitmap[yi * img_conf.screenx + xi].g += col.g;
+                bitmap[yi * img_conf.screenx + xi].b += col.b;
+            }
+        }
+    }
+
+    /*printf("%f %f %f %f\n", lowx, lowy, highx, highy);*/
+
+    if(useBounds == 0){
+        bounds->minx = lowx ;
+        bounds->miny = lowy ;
+        bounds->maxx = highx;
+        bounds->maxy = highy;
+    }
+
+    return;
 }
