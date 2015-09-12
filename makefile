@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Ofast -lm
+CFLAGS=-Ofast -lm -lpng
 FILES=cliff.c color.c
 BINS=cliff
 

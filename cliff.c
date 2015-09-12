@@ -47,7 +47,7 @@ int main(int argc, char *argv[]){
             x,y,z,w;
     char    name[257],fname[257],tmp[257];
 
-    _color *bitmap,col,*pal;
+    _color *bitmap, col, *pal;
 
     pal = (_color*) malloc (sizeof(_color) * 255);
 
@@ -63,10 +63,10 @@ int main(int argc, char *argv[]){
 
     if(argc == 3){                              // If the second parameter will be used as name if there is one. Useful for scripting
         strcpy(name,argv[2]);
-        sprintf(fname,"%s.ppm",name);
+        sprintf(fname,"%s.png",name);
     }else{
         sprintf(name,"name");                   // Else if this will be used as name
-        sprintf(fname,"%s.ppm",name);
+        sprintf(fname,"%s.png",name);
     }
 
     if(argc > 1){
@@ -77,9 +77,7 @@ int main(int argc, char *argv[]){
 
     printf("%s --- \n",name);
 
-    FILE *img=fopen(fname,"wt");
-
-    mina = acos( (drand48() * 4.0 - 2.0) / 16.0);	 // Randomly chooses the values to be used as parameter.
+    mina = acos( (drand48() * 4.0 - 2.0) / 16.0);       // Randomly chooses the values to be used as parameter.
     maxa = acos( (drand48() * 4.0 - 2.0) / 16.0);
 
     minb = acos( (drand48() * 4.0 - 2.0) / 16.0);
@@ -92,8 +90,6 @@ int main(int argc, char *argv[]){
     maxd = acos( (drand48() * 4.0 - 2.0) / 16.0);
 
     k=0;
-
-    fprintf(img,"P3\n%d %d\n255\n",screenx,screeny);
 
     printf("Parameters are:\n");
     printf("a=%.3f to %.3f\n", cos(mina) * 16, cos(maxa) * 16);
@@ -194,25 +190,20 @@ int main(int argc, char *argv[]){
             col.g = ((1.0 - exp( -sens * col.g)) * 255.0);
             col.b = ((1.0 - exp( -sens * col.b)) * 255.0);
 
-            col=invert_color(col);
+            col = invert_color(col);
 
-            fprintf(img,"%d %d %d ",(int)col.r,(int)col.g,(int)col.b);
+            bitmap[i * screenx + j] = col;
         }
-        fputc('\n',img);
     }
 
     printf(" -------\n\n");
 
     fprintf(stdout,"minx=%.4f;\tmaxx=%.4f;\nminy=%.4f;\tmaxy=%.4f;\n",minx,maxx,miny,maxy);
 
-    fclose(img);
+    save_png_to_file(bitmap, screenx, screeny, fname);
+
     free(bitmap);
 
-    sprintf(tmp,"convert %s %s.png",fname,name);
-    system(tmp);
-
-    sprintf(tmp,"rm %s",fname);
-    system(tmp);
 
     return EXIT_SUCCESS;
 }
