@@ -31,7 +31,6 @@
 #include "color.h"
 #include "magic.h"
 
-
 int main(int argc, char *argv[]){
     int     i,j,k,l,
             offset;
@@ -52,7 +51,7 @@ int main(int argc, char *argv[]){
 
     img_conf.frames      = 5800;                         // How many frames the image will have.
     img_conf.skipIters   = 500;                          // Skips the first n cycles before drawing to the file
-    img_conf.iters       = 25000;                        // Total iterations
+    img_conf.iters       = 5000;                        // Total iterations
     img_conf.sens        = 0.025 / 4.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
 
     if(argc == 3){                              // If the second parameter will be used as name if there is one. Useful for scripting
@@ -69,24 +68,10 @@ int main(int argc, char *argv[]){
         srand48(6);                             // Else use this one as seed. The seed determine the value generated as parameter.
     }
 
+    p_interval = get_random_interval();
+    bounds     = init_bounds();
+
     printf("%s --- \n",name);
-
-    p_interval.mina = acos( (drand48() * 4.0 - 2.0) / 16.0);       // Randomly chooses the values to be used as parameter.
-    p_interval.maxa = acos( (drand48() * 4.0 - 2.0) / 16.0);
-
-    p_interval.minb = acos( (drand48() * 4.0 - 2.0) / 16.0);
-    p_interval.maxb = acos( (drand48() * 4.0 - 2.0) / 16.0);
-
-    p_interval.minc = acos( (drand48() * 4.0 - 2.0) / 16.0);
-    p_interval.maxc = acos( (drand48() * 4.0 - 2.0) / 16.0);
-
-    p_interval.mind = acos( (drand48() * 4.0 - 2.0) / 16.0);
-    p_interval.maxd = acos( (drand48() * 4.0 - 2.0) / 16.0);
-
-    bounds.minx =  9999.0;
-    bounds.miny =  9999.0;
-    bounds.maxx = -9999.0;
-    bounds.maxy = -9999.0;
 
     k = 0;
 
@@ -104,13 +89,10 @@ int main(int argc, char *argv[]){
         else if(l == 1)
             printf("Starting drawing and stuff...\n");
 
-        for(i = 0 ; i <= (l==0 ? img_conf.frames * 0.10 :img_conf.frames) ; i++){
-            p = i / (double) (l==0 ? img_conf.frames * 0.10 : img_conf.frames);
+        for(i = 0 ; i < img_conf.frames ; ( l == 0 ? i += 10 : i++ )){
+            p = (double) i / img_conf.frames;
 
-            params.a = cos(p_interval.mina + p * (p_interval.maxa - p_interval.mina)) * 16.0;
-            params.b = cos(p_interval.minb + p * (p_interval.maxb - p_interval.minb)) * 16.0;
-            params.c = cos(p_interval.minc + p * (p_interval.maxc - p_interval.minc)) * 16.0;
-            params.d = cos(p_interval.mind + p * (p_interval.maxd - p_interval.mind)) * 16.0;
+            params = get_param_set_from_interval(p_interval, p);
 
             col = getPal(p);
 
@@ -118,20 +100,13 @@ int main(int argc, char *argv[]){
 
             cliff(params, img_conf, bitmap, &bb, l, col);
 
-            if ( k++ == 0 ){
+            if ( k == 0 ){
+                k++;
                 bounds = bb;
             }
 
             if (l == 0) {
-                 if ( bb.minx < bounds.minx ) {
-                    bounds.minx = bb.minx;
-                }if ( bb.miny < bounds.miny ) {
-                    bounds.miny = bb.miny;
-                }if ( bb.maxx > bounds.maxx ) {
-                    bounds.maxx = bb.maxx;
-                }if ( bb.maxy > bounds.maxy ) {
-                    bounds.maxy = bb.maxy;
-                }
+                bounds = update_boundaries(bounds, bb);
             }
 
             if( i % (img_conf.frames / 5) == 0 && l == 1)
@@ -139,10 +114,10 @@ int main(int argc, char *argv[]){
         }
 
         if(l == 0){
-            bounds.minx = bounds.minx * 1.25;
-            bounds.miny = bounds.miny * 1.25;
-            bounds.maxx = bounds.maxx * 1.25;
-            bounds.maxy = bounds.maxy * 1.25;
+            /*bounds.minx = bounds.minx * 1.25;*/
+            /*bounds.miny = bounds.miny * 1.25;*/
+            /*bounds.maxx = bounds.maxx * 1.25;*/
+            /*bounds.maxy = bounds.maxy * 1.25;*/
 
             printf("Boundaries are:\n");
             printf("x %.3f to %.3f\n", bounds.minx, bounds.maxx);
