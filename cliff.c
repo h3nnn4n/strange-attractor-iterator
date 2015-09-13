@@ -29,38 +29,8 @@
 
 #include "equations.h"
 #include "color.h"
+#include "magic.h"
 
-typedef struct {
-    double a, b, c, d;
-} _parameters;
-
-typedef struct {
-    double mina;
-    double maxa;
-
-    double minb;
-    double maxb;
-
-    double minc;
-    double maxc;
-
-    double mind;
-    double maxd;
-} _parameters_interval;
-
-typedef struct {
-    int frames, skipIters, iters,
-        screenx, screeny;
-
-    double sens;
-} _image_opt;
-
-typedef struct {
-    double minx, maxx;
-    double miny, maxy;
-} _bounds;
-
-void cliff(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bounds, int useBounds, _color col);
 
 int main(int argc, char *argv[]){
     int     i,j,k,l,
@@ -134,8 +104,8 @@ int main(int argc, char *argv[]){
         else if(l == 1)
             printf("Starting drawing and stuff...\n");
 
-        for(i = 0 ; i <= (l==0 ? img_conf.frames * 0.10 :img_conf.frames) ; i++){     // The ternary operator is is used to run a smaller version of the code to get
-            p = i / (double) (l==0 ? img_conf.frames * 0.10 : img_conf.frames);       // some boundaries for the image
+        for(i = 0 ; i <= (l==0 ? img_conf.frames * 0.10 :img_conf.frames) ; i++){
+            p = i / (double) (l==0 ? img_conf.frames * 0.10 : img_conf.frames);
 
             params.a = cos(p_interval.mina + p * (p_interval.maxa - p_interval.mina)) * 16.0;
             params.b = cos(p_interval.minb + p * (p_interval.maxb - p_interval.minb)) * 16.0;
@@ -209,78 +179,3 @@ int main(int argc, char *argv[]){
     return EXIT_SUCCESS;
 }
 
-void cliff(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bounds, int useBounds, _color col){
-    int    j, k,
-           xi, yi;
-
-    double x , y ,
-           xn, yn,
-           a , b , c , d,
-           lowx, lowy, highx, highy;
-
-    k = 0;
-
-    lowx  = 0.0;
-    lowy  = 0.0;
-    highx = 0.0;
-    highy = 0.0;
-
-    a = params.a;
-    b = params.b;
-    c = params.c;
-    d = params.d;
-
-    x = (drand48() - 0.5) * 4.0;
-    y = (drand48() - 0.5) * 4.0;
-
-    for(j = 0 ; j < img_conf.iters ; j++){
-
-        X_EQUATION
-        Y_EQUATION
-
-        x = xn;
-        y = yn;
-
-        if(j < img_conf.skipIters)
-            continue;
-
-        if(k++ == 0){
-            lowx  = x;
-            lowy  = y;
-            highx = x;
-            highy = y;
-        }
-
-        if(useBounds == 0){
-             if(x < lowx){
-                lowx = x;
-            }if(y < lowy){
-                lowy = y;
-            }if(x > highx){
-                highx = x;
-            }if(y > highy){
-                highy = y;
-            }
-        }else if(useBounds == 1){
-            xi = ((x - bounds->minx) * img_conf.screenx / (bounds->maxx - bounds->minx));
-            yi = ((y - bounds->miny) * img_conf.screeny / (bounds->maxy - bounds->miny));
-
-            if(xi < img_conf.screenx && xi >= 0 && yi < img_conf.screeny && yi >= 0){
-                bitmap[yi * img_conf.screenx + xi].r += col.r;
-                bitmap[yi * img_conf.screenx + xi].g += col.g;
-                bitmap[yi * img_conf.screenx + xi].b += col.b;
-            }
-        }
-    }
-
-    /*printf("%f %f %f %f\n", lowx, lowy, highx, highy);*/
-
-    if(useBounds == 0){
-        bounds->minx = lowx ;
-        bounds->miny = lowy ;
-        bounds->maxx = highx;
-        bounds->maxy = highy;
-    }
-
-    return;
-}
