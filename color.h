@@ -15,7 +15,7 @@ typedef struct {
 
 _color pal[256];
 
-int populatePal(_color *pallete);
+void populatePal(_color *pallete);
 
 int save_png_to_file(_color *bitmap, int screenx, int screeny, const char *path);
 

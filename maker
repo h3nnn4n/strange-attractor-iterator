@@ -3,7 +3,7 @@
 #    This script automates the criation process for 800 images
 
 ./stoper # Stops any instance that might be running
-./clean  # *REMOVES* all the images in the current folder. You should  read the script to be *EXTRA* sure that you wont delete anything important.
+make clean  # *REMOVES* all the images in the current folder. You should  read the script to be *EXTRA* sure that you wont delete anything important.
 
 make     # The program is compiled
 
