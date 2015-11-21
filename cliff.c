@@ -44,14 +44,14 @@ int main(int argc, char *argv[]){
 
     _color *bitmap, col;
 
-    img_conf.screenx     = 1920 / 2.0;                   // The resolution of the image
-    img_conf.screeny     = 1080 / 2.0;
+    img_conf.screenx     = 1920 / 1.0;                   // The resolution of the image
+    img_conf.screeny     = 1080 / 1.0;
 
              offset      = 1000;
 
-    img_conf.frames      = 5800;                         // How many frames the image will have.
+    img_conf.frames      = 25000;                         // How many frames the image will have.
     img_conf.skipIters   = 500;                          // Skips the first n cycles before drawing to the file
-    img_conf.iters       = 5000;                        // Total iterations
+    img_conf.iters       = 10000;                         // Total iterations
     img_conf.sens        = 0.025 / 4.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
 
     if(argc == 3){                              // If the second parameter will be used as name if there is one. Useful for scripting
@@ -83,6 +83,8 @@ int main(int argc, char *argv[]){
 
     bitmap = (_color*) malloc (sizeof(_color) * img_conf.screenx * img_conf.screeny);
 
+    _bounds bb;
+
     for(l = 0 ; l < 2 ; l++){
         if(l == 0)
             printf("Evaluating bondaries...\n");
@@ -96,7 +98,6 @@ int main(int argc, char *argv[]){
 
             col = getPal(p);
 
-            _bounds bb;
 
             cliff(params, img_conf, bitmap, &bb, l, col);
 
@@ -114,10 +115,10 @@ int main(int argc, char *argv[]){
         }
 
         if(l == 0){
-            /*bounds.minx = bounds.minx * 1.25;*/
-            /*bounds.miny = bounds.miny * 1.25;*/
-            /*bounds.maxx = bounds.maxx * 1.25;*/
-            /*bounds.maxy = bounds.maxy * 1.25;*/
+            bounds.minx *= 1.125;
+            bounds.miny *= 1.125;
+            bounds.maxx *= 1.125;
+            bounds.maxy *= 1.125;
 
             printf("Boundaries are:\n");
             printf("x %.3f to %.3f\n", bounds.minx, bounds.maxx);

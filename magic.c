@@ -68,10 +68,6 @@ void cliff(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bou
            xn, yn,
            a , b , c , d;
 
-    _bounds bb;
-
-    bb = init_bounds();
-
     a = params.a;
     b = params.b;
     c = params.c;
@@ -82,6 +78,8 @@ void cliff(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bou
 
     for(j = 0 ; j < img_conf.iters ; j++){
 
+        // Macro for the equations. Equations are in equations.h
+        // It can also be set in the CFLAGS
         X_EQUATION
         Y_EQUATION
 
@@ -92,14 +90,14 @@ void cliff(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bou
             continue;
 
         if(useBounds == 0){
-            if(x < bb.minx){
-                bb.minx = x;
-            }if(y < bb.miny){
-                bb.miny = y;
-            }if(x > bb.maxx){
-                bb.maxx = x;
-            }if(y > bb.maxy){
-                bb.maxy = y;
+            if(x < bounds->minx){
+                bounds->minx = x;
+            }if(y < bounds->miny){
+                bounds->miny = y;
+            }if(x > bounds->maxx){
+                bounds->maxx = x;
+            }if(y > bounds->maxy){
+                bounds->maxy = y;
             }
         }else if(useBounds == 1){
             xi = ((x - bounds->minx) * img_conf.screenx / (bounds->maxx - bounds->minx));
@@ -111,10 +109,6 @@ void cliff(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bou
                 bitmap[yi * img_conf.screenx + xi].b += col.b;
             }
         }
-    }
-
-    if(useBounds == 0){
-        memcpy(bounds, &bb, sizeof(_bounds));
     }
 
     return;
