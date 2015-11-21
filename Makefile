@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=-Ofast -lm -lpng
-FILES=cliff.c color.c
+CFLAGS=-Ofast -lm -lpng -Wall
+FILES=cliff.c color.c magic.c
 BINS=cliff
 
 all: cliff.c
