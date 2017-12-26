@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -23,10 +24,10 @@ _bounds update_boundaries(_bounds a, _bounds b){
 _parameters get_param_set_from_interval(_parameters_interval p_interval, double p){
     _parameters params;
 
-    params.a = cos(p_interval.mina + p * (p_interval.maxa - p_interval.mina)) * 16.0;
-    params.b = cos(p_interval.minb + p * (p_interval.maxb - p_interval.minb)) * 16.0;
-    params.c = cos(p_interval.minc + p * (p_interval.maxc - p_interval.minc)) * 16.0;
-    params.d = cos(p_interval.mind + p * (p_interval.maxd - p_interval.mind)) * 16.0;
+    params.a = p_interval.mina + p * (p_interval.maxa - p_interval.mina);
+    params.b = p_interval.minb + p * (p_interval.maxb - p_interval.minb);
+    params.c = p_interval.minc + p * (p_interval.maxc - p_interval.minc);
+    params.d = p_interval.mind + p * (p_interval.maxd - p_interval.mind);
 
     return params;
 }
@@ -34,17 +35,39 @@ _parameters get_param_set_from_interval(_parameters_interval p_interval, double 
 _parameters_interval get_random_interval(){
     _parameters_interval p_interval;
 
-    p_interval.mina = acos( (drand48() * 4.0 - 2.0) / 16.0);       // Randomly chooses the values to be used as parameter.
-    p_interval.maxa = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    p_interval.mina = drand48() * 4.0 - 2.0;       // Randomly chooses the values to be used as parameter.
+    /*p_interval.maxa = drand48() * 4.0 - 2.0;*/
 
-    p_interval.minb = acos( (drand48() * 4.0 - 2.0) / 16.0);
-    p_interval.maxb = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    p_interval.minb = drand48() * 4.0 - 2.0;
+    /*p_interval.maxb = drand48() * 4.0 - 2.0;*/
 
-    p_interval.minc = acos( (drand48() * 4.0 - 2.0) / 16.0);
-    p_interval.maxc = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    p_interval.minc = drand48() * 4.0 - 2.0;
+    /*p_interval.maxc = drand48() * 4.0 - 2.0;*/
 
-    p_interval.mind = acos( (drand48() * 4.0 - 2.0) / 16.0);
-    p_interval.maxd = acos( (drand48() * 4.0 - 2.0) / 16.0);
+    p_interval.mind = drand48() * 4.0 - 2.0;
+    /*p_interval.maxd = drand48() * 4.0 - 2.0;*/
+
+    p_interval.maxa = p_interval.mina;
+    p_interval.maxb = p_interval.minb;
+    p_interval.maxc = p_interval.minc;
+    p_interval.maxd = p_interval.mind;
+
+    int r = rand() % 4;
+
+    switch (r) {
+        case 0:
+            p_interval.maxa = p_interval.mina + (drand48() - 0.5) * .75;
+            break;
+        case 1:
+            p_interval.maxb = p_interval.minb + (drand48() - 0.5) * .75;
+            break;
+        case 2:
+            p_interval.maxc = p_interval.minc + (drand48() - 0.5) * .75;
+            break;
+        case 3:
+            p_interval.maxd = p_interval.mind + (drand48() - 0.5) * .75;
+            break;
+    }
 
     return p_interval;
 }
@@ -64,8 +87,8 @@ void cliff(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bou
     int    j,
            xi, yi;
 
-    double x , y ,
-           xn, yn,
+    double x , y , z , w ,
+           xn, yn, zn, wn,
            a , b , c , d;
 
     a = params.a;
@@ -75,6 +98,8 @@ void cliff(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bou
 
     x = (drand48() - 0.5) * 4.0;
     y = (drand48() - 0.5) * 4.0;
+    z = (drand48() - 0.5) * 4.0;
+    w = (drand48() - 0.5) * 4.0;
 
     for(j = 0 ; j < img_conf.iters ; j++){
 
@@ -82,6 +107,8 @@ void cliff(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bou
         // It can also be set in the CFLAGS
         X_EQUATION
         Y_EQUATION
+        Z_EQUATION
+        W_EQUATION
 
         x = xn;
         y = yn;

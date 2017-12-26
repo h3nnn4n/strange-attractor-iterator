@@ -49,10 +49,11 @@ int main(int argc, char *argv[]){
 
              offset      = 1000;
 
-    img_conf.frames      = 25000;                         // How many frames the image will have.
+    img_conf.frames      = 50000;                         // How many frames the image will have.
     img_conf.skipIters   = 500;                          // Skips the first n cycles before drawing to the file
-    img_conf.iters       = 10000;                         // Total iterations
-    img_conf.sens        = 0.025 / 4.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
+    img_conf.iters       = 25000;                         // Total iterations
+    img_conf.sens        = 0.025 / 75.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
+    /*img_conf.sens        = 0.025 / 1.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be*/
 
     if(argc == 3){                              // If the second parameter will be used as name if there is one. Useful for scripting
         strcpy(name,argv[2]);
@@ -76,10 +77,10 @@ int main(int argc, char *argv[]){
     k = 0;
 
     printf("Parameters are:\n");
-    printf("a=%.3f to %.3f\n", cos(p_interval.mina) * 16, cos(p_interval.maxa) * 16);
-    printf("b=%.3f to %.3f\n", cos(p_interval.minb) * 16, cos(p_interval.maxb) * 16);
-    printf("c=%.3f to %.3f\n", cos(p_interval.minc) * 16, cos(p_interval.maxc) * 16);
-    printf("d=%.3f to %.3f\n", cos(p_interval.mind) * 16, cos(p_interval.maxd) * 16);
+    printf("a=%.3f to %.3f\n", p_interval.mina, p_interval.maxa);
+    printf("b=%.3f to %.3f\n", p_interval.minb, p_interval.maxb);
+    printf("c=%.3f to %.3f\n", p_interval.minc, p_interval.maxc);
+    printf("d=%.3f to %.3f\n", p_interval.mind, p_interval.maxd);
 
     bitmap = (_color*) malloc (sizeof(_color) * img_conf.screenx * img_conf.screeny);
 
@@ -110,7 +111,7 @@ int main(int argc, char *argv[]){
                 bounds = update_boundaries(bounds, bb);
             }
 
-            if( i % (img_conf.frames / 5) == 0 && l == 1)
+            if( i % (img_conf.frames / 10) == 0 && l == 1)
                 fprintf(stdout," -- %.2f%%\n", p * 100.0);
         }
 
