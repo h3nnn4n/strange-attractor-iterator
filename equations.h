@@ -1,9 +1,9 @@
 #ifndef X_EQUATION
-#define X_EQUATION xn = sin(a * y) + c * cos(a * x);  // xn = (a * cos((j * M_PI/180.0) + c)) + b * sinh(y * d) / cosh(x * y * a) + a * cos( x * c - d) + b;
+#define X_EQUATION xn = pow(tanh(a * x), 2.0) + c * (1.0 / cosh(d * y)) + b * (1.0 * sin(a * x)) + cos((j / img_conf.iters) * d * M_PI) * a; // * (a * cos(((j / img_conf.iters) * 10.0 * M_PI) + z));
 #endif
 
 #ifndef Y_EQUATION
-#define Y_EQUATION yn = sin(b * x) + d * cos(b * y);  // yn = (b * sin((j * M_PI/180.0) + d)) + c * sinh(x * a) / cosh(x * y * b) + b * sin( y * d - a) + c;
+#define Y_EQUATION yn = pow(tanh(b * y), 2.0) + d * (1.0 / cosh(c * x)) + a * (1.0 * sin(c * y)) + sin((j / img_conf.iters) * c * M_PI) * b; // * (b * sin(((j / img_conf.iters) * 10.0 * M_PI) + w));
 #endif
 
 #ifndef W_EQUATION
