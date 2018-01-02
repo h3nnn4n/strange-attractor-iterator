@@ -5,3 +5,5 @@ core
 *.swp
 *.swo
 cliff
+*.o
+*.so

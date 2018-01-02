@@ -1,17 +1,31 @@
-CC=gcc
 CFLAGS=-Ofast -lm -lpng -Wall
-FILES=cliff.c color.c magic.c
-BINS=cliff
+LDFLAGS =-shared -fPIC -Wl,-soname #,libstrange.so
 
-all: cliff.c
-	$(CC) $(CFLAGS) -o $(BINS) $(FILES)
+CC=gcc
 
-.PHONY: clean clean_bin clean_images
+SOURCES=color.c \
+		magic.c \
+		strange.c \
+
+SOURCE_BIN=cliff.c
+EXECUTABLE=cliff
+TARGET_LIB = libstrange.so
+LIB_O = strange.o
+
+OBJECTS=$(SOURCES:.c=.o)
+OBJECTS_BIN=$(SOURCE_BIN:.c=.o)
+
+all: $(SOURCES) $(SOURCE_BIN) $(EXECUTABLE) $(TARGET_LIB)
+
+$(EXECUTABLE): $(OBJECTS) $(OBJECTS_BIN)
+	$(CC) $(CFLAGS) $(OBJECTS) $(OBJECTS_BIN) -o $@
+
+.c.o:
+	$(CC) $(CFLAGS) $< -c -fPIC -o $@
+
+$(TARGET_LIB):
+	$(CC) $(LDFLAGS) -o $(TARGET_LIB) $(OBJECTS) -lc
+
+.PHONY: clean
 clean:
-	-@rm $(BINS) core *.png *.ppm 2>/dev/null || true
-
-clean_images:
-	-@rm *.png *.ppm 2>/dev/null || true
-
-clean_bin:
-	-@rm $(BINS) core 2>/dev/null || true
+	$(RM) $(OBJECTS_BIN) $(OBJECTS) $(EXECUTABLE) $(TARGET_LIB)
