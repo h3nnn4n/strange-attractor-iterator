@@ -51,8 +51,8 @@ int main(int argc, char *argv[]){
 
     img_conf.frames      = 50000;                         // How many frames the image will have.
     img_conf.skipIters   = 500;                          // Skips the first n cycles before drawing to the file
-    img_conf.iters       = 25000;                         // Total iterations
-    img_conf.sens        = 0.025 / 75.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
+    img_conf.iters       = 2500;                         // Total iterations
+    img_conf.sens        = 0.025 / 5.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
     /*img_conf.sens        = 0.025 / 1.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be*/
 
     if(argc == 3){                              // If the second parameter will be used as name if there is one. Useful for scripting
