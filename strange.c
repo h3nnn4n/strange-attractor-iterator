@@ -7,6 +7,22 @@
 #include "color.h"
 #include "equations.h"
 
+
+double test(double *a, int len){
+    double r = 0;
+    for (int i = 0; i < len; ++i) {
+        r += a[i];
+        a[i] = -1;
+    }
+    return r;
+}
+
+void parameters_test(_parameters *p) {
+    printf("%f %f %f %f\n", p->a, p->b, p->c, p->d);
+    return;
+}
+
+
 double foo(_parameters params, _image_opt img_conf, _color *bitmap, _bounds *bounds, int useBounds, _color col){
     int    j,
            xi, yi;
