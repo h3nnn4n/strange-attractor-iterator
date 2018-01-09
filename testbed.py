@@ -42,12 +42,12 @@ class Strange:
                     ("b", ctypes.c_double)]
 
     def __init__(self):
-        self.libstrange = ctypes.CDLL("./libstrange.so")
+        # self.libcolor = ctypes.CDLL("./libcolor.so")
+        self.libmagic = ctypes.CDLL("./libmagic.so")
 
-        # foo = self.libstrange.foo
-        foo = self.libstrange.cliff
-        foo.restype = ctypes.c_double
-        # foo.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.c_int]
+        cliff = self.libmagic.cliff
+        # cliff.restype = ctypes.c_double
+        # cliff.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.c_int]
 
         parameters = Strange.Parameter(-1.4, 1.6, 1.0, 0.7)
         parameter_interval = Strange.ParameterInterval()
@@ -64,24 +64,49 @@ class Strange:
         self.parameters = parameters
         self.parameter_interval = parameter_interval
         self.color = color
-        self.foo = foo
+        self.cliff = cliff
         self.bounds = bounds
         self.pbounds = pbounds
 
     def test(self):
-        self.foo(self.parameters, self.image_config, self.bitmap, self.pbounds, 0, self.color)
-        self.foo(self.parameters, self.image_config, self.bitmap, self.pbounds, 1, self.color)
+        self.cliff(self.parameters, self.image_config, self.bitmap, self.pbounds, 0, self.color)
+        self.cliff(self.parameters, self.image_config, self.bitmap, self.pbounds, 1, self.color)
 
     def save(self):
-        with open('uhull.ppm', 'wt') as f:
-            f.write('P3\n')
-            f.write('%d %d\n' % (self.image_config.screenx, self.image_config.screeny))
-            f.write('%d\n' % (255))
+        def write_png(buf, width, height):
+            import zlib
+            import struct
 
-            for j in range(self.image_config.screeny):
-                for i in range(self.image_config.screenx):
-                    f.write("%d %d %d " % (math.ceil(self.bitmap[j][i].r), math.ceil(self.bitmap[j][i].g), math.ceil(self.bitmap[j][i].b)))
-                f.write('\n')
+            width_byte_4 = width * 4
+            raw_data = b''.join(b'\x00' + buf[span:span + width_byte_4]
+                                for span in range((height - 1) * width_byte_4, -1, - width_byte_4))
+
+            def png_pack(png_tag, data):
+                chunk_head = png_tag + data
+                return (struct.pack("!I", len(data)) +
+                        chunk_head +
+                        struct.pack("!I", 0xFFFFFFFF & zlib.crc32(chunk_head)))
+
+            return b''.join([
+                b'\x89PNG\r\n\x1a\n',
+                png_pack(b'IHDR', struct.pack("!2I5B", width, height, 8, 6, 0, 0, 0)),
+                png_pack(b'IDAT', zlib.compress(raw_data, 9)),
+                png_pack(b'IEND', b'')])
+
+        buf = bytearray(self.image_config.screenx * self.image_config.screeny * 4)
+
+        for j in range(self.image_config.screeny):
+            for i in range(self.image_config.screenx):
+                p = (math.ceil(self.bitmap[j][i].r), math.ceil(self.bitmap[j][i].g), math.ceil(self.bitmap[j][i].b), 0xff)
+
+                buf[(j * self.image_config.screenx + i) * 4 + 0] = p[0] % 256
+                buf[(j * self.image_config.screenx + i) * 4 + 1] = p[1] % 256
+                buf[(j * self.image_config.screenx + i) * 4 + 2] = p[2] % 256
+                buf[(j * self.image_config.screenx + i) * 4 + 3] = p[3] % 256
+
+        data = write_png(buf, self.image_config.screenx, self.image_config.screeny)
+        with open("my_image.png", 'wb') as fd:
+            fd.write(data)
 
 
 if __name__ == '__main__':
