@@ -179,7 +179,9 @@ if __name__ == '__main__':
     s.parameter_interval.maxd = s.parameters.d + 0.2
 
     c = color.Color()
-    c.set_grad(1.0, 0.0, 0.3, 0.6, 0.2, 1.0) 
+    # c.set_grad(255, 0, 90, 140, 0, 255)
+    # c.set_solid_color(0, 127, 255)
+    c.set_pal('pals/sand.ppm')
     s.set_color(c)
 
     s.eval_bounds()
