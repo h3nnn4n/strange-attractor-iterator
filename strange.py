@@ -68,10 +68,6 @@ class Strange:
         self.bounds = bounds
         self.pbounds = pbounds
 
-    def test(self):
-        self.cliff(self.parameters, self.image_config, self.bitmap, self.pbounds, 0, self.color)
-        self.cliff(self.parameters, self.image_config, self.bitmap, self.pbounds, 1, self.color)
-
     def eval_bounds(self):
         iters = self.image_config.iters
         self.image_config.iters = iters // 10
