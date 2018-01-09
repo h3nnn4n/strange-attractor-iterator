@@ -51,7 +51,7 @@ class Strange:
 
         parameters = Strange.Parameter(-1.4, 1.6, 1.0, 0.7)
         parameter_interval = Strange.ParameterInterval()
-        image_config = Strange.ImgOpt(5000, 500, 5000000, 800, 600, 0.01)
+        image_config = Strange.ImgOpt(1000, 500, 50000, 800, 600, 0.001)
 
         color = Strange.Color(1.0, 0.0, 0.5)
         bitmap = (Strange.Color * image_config.screenx * image_config.screeny)()
@@ -71,6 +71,38 @@ class Strange:
     def test(self):
         self.cliff(self.parameters, self.image_config, self.bitmap, self.pbounds, 0, self.color)
         self.cliff(self.parameters, self.image_config, self.bitmap, self.pbounds, 1, self.color)
+
+    def eval_bounds(self):
+        iters = self.image_config.iters
+        self.image_config.iters = iters // 10
+
+        print('Evaluating bounds')
+
+        for i in range(0, self.image_config.frames, 10):
+            self.update_parameters(i)
+            self.cliff(self.parameters, self.image_config, self.bitmap, self.pbounds, 0, self.color)
+
+        self.image_config.iters = iters
+
+        bounds = self.bounds
+        print("Bounds are: (%6.3f, %6.3f) and (%6.3f, %6.3f)" % (bounds.minx, bounds.maxx, bounds.miny, bounds.maxy))
+
+    def run(self):
+        print('Running')
+
+        for i in range(self.image_config.frames):
+            if (i + 1) % (self.image_config.frames // 10) == 0:
+                print("%4.1f%%" % (((i + 1) / self.image_config.frames) * 100.0))
+            self.update_parameters(i)
+            self.cliff(self.parameters, self.image_config, self.bitmap, self.pbounds, 1, self.color)
+
+    def update_parameters(self, i):
+        p = i / self.image_config.frames
+
+        self.parameters.a = self.parameter_interval.mina + p * (self.parameter_interval.maxa - self.parameter_interval.mina)
+        self.parameters.b = self.parameter_interval.minb + p * (self.parameter_interval.maxb - self.parameter_interval.minb)
+        self.parameters.c = self.parameter_interval.minc + p * (self.parameter_interval.maxc - self.parameter_interval.minc)
+        self.parameters.d = self.parameter_interval.mind + p * (self.parameter_interval.maxd - self.parameter_interval.mind)
 
     def save(self):
         def write_png(buf, width, height):
@@ -97,11 +129,11 @@ class Strange:
 
         for j in range(self.image_config.screeny):
             for i in range(self.image_config.screenx):
-                p = (math.ceil(self.bitmap[j][i].r), math.ceil(self.bitmap[j][i].g), math.ceil(self.bitmap[j][i].b), 0xff)
+                p = (self.bitmap[j][i].r, self.bitmap[j][i].g, self.bitmap[j][i].b, 0xff)
 
-                buf[(j * self.image_config.screenx + i) * 4 + 0] = p[0] % 256
-                buf[(j * self.image_config.screenx + i) * 4 + 1] = p[1] % 256
-                buf[(j * self.image_config.screenx + i) * 4 + 2] = p[2] % 256
+                buf[(j * self.image_config.screenx + i) * 4 + 0] = math.floor(((1.0 - math.exp(-self.image_config.sens * p[0])) * 255.0))
+                buf[(j * self.image_config.screenx + i) * 4 + 1] = math.floor(((1.0 - math.exp(-self.image_config.sens * p[1])) * 255.0))
+                buf[(j * self.image_config.screenx + i) * 4 + 2] = math.floor(((1.0 - math.exp(-self.image_config.sens * p[2])) * 255.0))
                 buf[(j * self.image_config.screenx + i) * 4 + 3] = p[3] % 256
 
         data = write_png(buf, self.image_config.screenx, self.image_config.screeny)
@@ -111,5 +143,23 @@ class Strange:
 
 if __name__ == '__main__':
     s = Strange()
-    s.test()
+
+    s.parameter_interval.mina = s.parameters.a
+    s.parameter_interval.maxa = s.parameters.a
+
+    s.parameter_interval.minb = s.parameters.b
+    s.parameter_interval.maxb = s.parameters.b
+
+    s.parameter_interval.minc = s.parameters.c
+    s.parameter_interval.maxc = s.parameters.c
+
+    s.parameter_interval.mind = s.parameters.d
+    s.parameter_interval.maxd = s.parameters.d
+
+    s.parameter_interval.maxd = s.parameters.d + 0.2
+
+    s.eval_bounds()
+
+    s.run()
+
     s.save()
