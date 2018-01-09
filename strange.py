@@ -3,6 +3,7 @@
 
 import ctypes
 import math
+import color
 
 
 class Strange:
@@ -42,7 +43,6 @@ class Strange:
                     ("b", ctypes.c_double)]
 
     def __init__(self):
-        # self.libcolor = ctypes.CDLL("./libcolor.so")
         self.libmagic = ctypes.CDLL("./libmagic.so")
 
         cliff = self.libmagic.cliff
@@ -51,9 +51,9 @@ class Strange:
 
         parameters = Strange.Parameter(-1.4, 1.6, 1.0, 0.7)
         parameter_interval = Strange.ParameterInterval()
-        image_config = Strange.ImgOpt(1000, 500, 50000, 800, 600, 0.001)
+        image_config = Strange.ImgOpt(1000, 500, 50000, 800, 600, 0.005)
 
-        color = Strange.Color(1.0, 0.0, 0.5)
+        color_ = Strange.Color(1.0, 0.0, 0.5)
         bitmap = (Strange.Color * image_config.screenx * image_config.screeny)()
 
         bounds = Strange.Bounds(9999, -9999, 9999, -9999)
@@ -63,7 +63,7 @@ class Strange:
         self.bitmap = bitmap
         self.parameters = parameters
         self.parameter_interval = parameter_interval
-        self.color = color
+        self.color = color_
         self.cliff = cliff
         self.bounds = bounds
         self.pbounds = pbounds
@@ -90,6 +90,7 @@ class Strange:
             if (i + 1) % (self.image_config.frames // 10) == 0:
                 print("%4.1f%%" % (((i + 1) / self.image_config.frames) * 100.0))
             self.update_parameters(i)
+            self.update_color(i / self.image_config.frames)
             self.cliff(self.parameters, self.image_config, self.bitmap, self.pbounds, 1, self.color)
 
     def update_parameters(self, i):
@@ -99,6 +100,21 @@ class Strange:
         self.parameters.b = self.parameter_interval.minb + p * (self.parameter_interval.maxb - self.parameter_interval.minb)
         self.parameters.c = self.parameter_interval.minc + p * (self.parameter_interval.maxc - self.parameter_interval.minc)
         self.parameters.d = self.parameter_interval.mind + p * (self.parameter_interval.maxd - self.parameter_interval.mind)
+
+    def set_color(self, color_manager):
+        self.color_manager = color_manager
+
+    def update_color(self, p, invert=True):
+        r, g, b = self.color_manager[p]
+
+        if invert:
+            r = 1.0 - r
+            g = 1.0 - g
+            b = 1.0 - b
+
+        self.color.r = r
+        self.color.g = g
+        self.color.b = b
 
     def save(self):
         def write_png(buf, width, height):
@@ -127,9 +143,17 @@ class Strange:
             for i in range(self.image_config.screenx):
                 p = (self.bitmap[j][i].r, self.bitmap[j][i].g, self.bitmap[j][i].b, 0xff)
 
-                buf[(j * self.image_config.screenx + i) * 4 + 0] = math.floor(((1.0 - math.exp(-self.image_config.sens * p[0])) * 255.0))
-                buf[(j * self.image_config.screenx + i) * 4 + 1] = math.floor(((1.0 - math.exp(-self.image_config.sens * p[1])) * 255.0))
-                buf[(j * self.image_config.screenx + i) * 4 + 2] = math.floor(((1.0 - math.exp(-self.image_config.sens * p[2])) * 255.0))
+                r = math.floor(((1.0 - math.exp(-self.image_config.sens * p[0])) * 255.0))
+                g = math.floor(((1.0 - math.exp(-self.image_config.sens * p[1])) * 255.0))
+                b = math.floor(((1.0 - math.exp(-self.image_config.sens * p[2])) * 255.0))
+
+                r = 255 - r
+                g = 255 - g
+                b = 255 - b
+
+                buf[(j * self.image_config.screenx + i) * 4 + 0] = r
+                buf[(j * self.image_config.screenx + i) * 4 + 1] = g
+                buf[(j * self.image_config.screenx + i) * 4 + 2] = b
                 buf[(j * self.image_config.screenx + i) * 4 + 3] = p[3] % 256
 
         data = write_png(buf, self.image_config.screenx, self.image_config.screeny)
@@ -154,8 +178,10 @@ if __name__ == '__main__':
 
     s.parameter_interval.maxd = s.parameters.d + 0.2
 
+    c = color.Color()
+    c.set_grad(1.0, 0.0, 0.3, 0.6, 0.2, 1.0) 
+    s.set_color(c)
+
     s.eval_bounds()
-
     s.run()
-
     s.save()

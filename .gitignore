@@ -7,3 +7,4 @@ core
 cliff
 *.o
 *.so
+__pycache__
