@@ -8,10 +8,8 @@ SOURCES=color.c \
 
 SOURCE_BIN=cliff.c
 EXECUTABLE=cliff
-TARGET_LIB = libstrange.so
 TARGET_LIBS = libcolor.so \
 			  libmagic.so
-LIB_O = strange.o
 
 OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_BIN=$(SOURCE_BIN:.c=.o)
