@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import ctypes
+import math
 
 
 class Strange:
@@ -21,30 +22,69 @@ class Strange:
                     ("c", ctypes.c_double),
                     ("d", ctypes.c_double)]
 
+    class ImgOpt(ctypes.Structure):
+        _fields_ = [("frames", ctypes.c_int),
+                    ("skipIters", ctypes.c_int),
+                    ("iters", ctypes.c_int),
+                    ("screenx", ctypes.c_int),
+                    ("screeny", ctypes.c_int),
+                    ("sens", ctypes.c_double)]
+
+    class Bounds(ctypes.Structure):
+        _fields_ = [("minx", ctypes.c_double),
+                    ("maxx", ctypes.c_double),
+                    ("miny", ctypes.c_double),
+                    ("maxy", ctypes.c_double)]
+
+    class Color(ctypes.Structure):
+        _fields_ = [("r", ctypes.c_double),
+                    ("g", ctypes.c_double),
+                    ("b", ctypes.c_double)]
+
     def __init__(self):
         self.libstrange = ctypes.CDLL("./libstrange.so")
 
-        test = self.libstrange.test
-        test.restype = ctypes.c_double
-        test.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.c_int]
+        # foo = self.libstrange.foo
+        foo = self.libstrange.cliff
+        foo.restype = ctypes.c_double
+        # foo.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.c_int]
 
-        a = (ctypes.c_double * 5)()
-        l = len(a)
+        parameters = Strange.Parameter(-1.4, 1.6, 1.0, 0.7)
+        parameter_interval = Strange.ParameterInterval()
+        image_config = Strange.ImgOpt(5000, 500, 5000000, 800, 600, 0.01)
 
-        for i in range(l):
-            a[i] = 1.2
+        color = Strange.Color(1.0, 0.0, 0.5)
+        bitmap = (Strange.Color * image_config.screenx * image_config.screeny)()
 
-        print(test(a, l))
+        bounds = Strange.Bounds(9999, -9999, 9999, -9999)
+        pbounds = ctypes.pointer(bounds)
 
-        for i in a:
-            print(i)
+        self.image_config = image_config
+        self.bitmap = bitmap
+        self.parameters = parameters
+        self.parameter_interval = parameter_interval
+        self.color = color
+        self.foo = foo
+        self.bounds = bounds
+        self.pbounds = pbounds
 
-        parameters_test = self.libstrange.parameters_test
+    def test(self):
+        self.foo(self.parameters, self.image_config, self.bitmap, self.pbounds, 0, self.color)
+        self.foo(self.parameters, self.image_config, self.bitmap, self.pbounds, 1, self.color)
 
-        p = Strange.Parameter(0, 1, 2, 3)
+    def save(self):
+        with open('uhull.ppm', 'wt') as f:
+            f.write('P3\n')
+            f.write('%d %d\n' % (self.image_config.screenx, self.image_config.screeny))
+            f.write('%d\n' % (255))
 
-        print(parameters_test(p))
+            for j in range(self.image_config.screeny):
+                for i in range(self.image_config.screenx):
+                    f.write("%d %d %d " % (math.ceil(self.bitmap[j][i].r), math.ceil(self.bitmap[j][i].g), math.ceil(self.bitmap[j][i].b)))
+                f.write('\n')
 
 
 if __name__ == '__main__':
     s = Strange()
+    s.test()
+    s.save()
