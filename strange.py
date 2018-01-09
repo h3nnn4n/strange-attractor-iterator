@@ -1,6 +1,3 @@
-#!/usr/bin/python3.5
-# -*- coding: utf-8 -*-
-
 import ctypes
 import math
 import color
