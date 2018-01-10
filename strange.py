@@ -65,6 +65,15 @@ class Strange:
         self.bounds = bounds
         self.pbounds = pbounds
 
+    def info(self):
+        b = self.bounds
+        i = self.image_config
+        print('Attractor info:')
+        print('bounds: (%7.3f, %7.3f) (%7.3f, %7.3f)' % (b.minx, b.maxx, b.miny, b.maxy))
+        print('iterations: %10d   skipIters: %6d   frames: %6d' % (i.iters, i.skipIters, i.frames))
+        print('resolution: %6d x %6d    sens: %f' % (i.screenx, i.screeny, i.sens))
+
+
     def eval_bounds(self):
         iters = self.image_config.iters
         self.image_config.iters = iters // 10
@@ -113,7 +122,7 @@ class Strange:
         self.color.g = g
         self.color.b = b
 
-    def save(self):
+    def save(self, name=None):
         def write_png(buf, width, height):
             import zlib
             import struct
@@ -154,7 +163,11 @@ class Strange:
                 buf[(j * self.image_config.screenx + i) * 4 + 3] = p[3] % 256
 
         data = write_png(buf, self.image_config.screenx, self.image_config.screeny)
-        with open("my_image.png", 'wb') as fd:
+
+        if name is None:
+            name = 'out'
+
+        with open(name + '.png', 'wb') as fd:
             fd.write(data)
 
 

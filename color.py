@@ -21,6 +21,7 @@ class Color:
 
     def set_pal(self, path):
         self.mode = 'pal'
+        self.path = path
 
         mode = 0
 
@@ -74,7 +75,20 @@ class Color:
                 r = color[0]
                 g = color[1]
                 b = color[2]
-            except:
-                print(index, self.pal_len, len(self.data))
+            except Exception as e:
+                print(e)
+                # print(index, self.pal_len, len(self.data))
 
         return (r / 255.0, g / 255.0, b / 255.0)
+
+    def info(self):
+        print('color info:')
+
+        if self.mode is None:
+            print('colorManager was not initialized')
+        elif self.mode == 'solid':
+            print('using solid color (%3d, %3d, %3d)' % (self.r, self.g, self.b))
+        elif self.mode == 'grad':
+            print('using grad color from (%3d, %3d, %3d) to (%3d, %3d, %3d)' % (self.r1, self.g1, self.b1, self.r2, self.g2, self.b2))
+        elif self.mode == 'pal':
+            print('using palette %s' % self.path)
