@@ -55,6 +55,10 @@ int main(int argc, char *argv[]){
     img_conf.sens        = 0.025 / 75.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
     /*img_conf.sens        = 0.025 / 1.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be*/
 
+    img_conf.frames      = 5000;                         // How many frames the image will have.
+    img_conf.iters       = 12500;                         // Total iterations
+    img_conf.sens        = 0.025 / 8.125;                // The brightness. Higher is brighter. The bigger the number frames, the smaller this value sould be
+
     if(argc == 3){                              // If the second parameter will be used as name if there is one. Useful for scripting
         strcpy(name,argv[2]);
         sprintf(fname,"%s.png",name);
