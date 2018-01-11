@@ -117,7 +117,7 @@ _color getPal(double p){	 // Get the colors from a file. Slow enough that make s
     _color col;
     int size,i,r,g,b;
     char lal[256];
-    FILE *pal=fopen("pals/sunrise.ppm", "rt");
+    FILE *pal=fopen("pals/pink_sundown_inverted.ppm", "rt");
 
     fgets(lal,255,pal);
     fgets(lal,255,pal);
@@ -135,9 +135,9 @@ _color getPal(double p){	 // Get the colors from a file. Slow enough that make s
         fscanf(pal,"%d\n%d\n%d\n",&r,&g,&b);
     }
 
-    col.r=r/255.0;
-    col.g=g/255.0;
-    col.b=b/255.0;
+    col.r=1.0 - (r/255.0);
+    col.g=1.0 - (g/255.0);
+    col.b=1.0 - (b/255.0);
 
     fclose(pal);
     return col;
